@@ -22,32 +22,36 @@ Question 1:
 #matrix at each step.
 """
     
-A1 = array([[1, 0, 1, 0, 1, 0], [1, 0, 0, 0, 1, 0], [1, 0, 1, 0, 0, -4]])
-A2 = array([[1, 0, 1, 0, 1, 0], [0, 1, 0, 2, 0, 0], [0, 1, 0, 0, 0, 3]])
-A3 = array([[1, 50, 1, 0, 1, 0], [1, 0, 0, 20, 1, 0], [-1, 0, -1, 0, 0, 40]])
+f = lambda x,y,z: x**2 + y**2 + z**2 - 1
+g = lambda x,y,z: x**2 + z**2 - 0.25
+h = lambda x,y,z: x**2 + y**2 - 4*z  
 
-b1 = array([1, 0.25, 0])
-b2 = array([10, 2, 9])
-b3 = array([200, 50, -75])
-  
-m1 = len(b1)
-m2 = len(b2)
-m3 = len(b3)
 
-x1 = array([1, 1, 1]) # initial vector
-x2 = array([2, 0, 2]) # initial vector
-x3 = array([2, 2, 2]) # initial vector
+#Section 1
+A = array([f, g, h])
+
+b = array([1, 0.25, 0])
+
+m = len(b)
+
+x = array([1.0, 1, 1]) # initial vector
+
+v = [0,0,0]
+w = [0,0,0]
+w = [[0],[0],[0]]
 
 
 n = 0 #iteration counter
-x01 = copy.copy(x1)
-x02 = copy.copy(x2)
-x03 = copy.copy(x3)
+x0 = copy.copy(x)
 
-xn = 1 #dummy initial tolerance
+xn = 1 # dummy initial tolerance
+h = 1e-2
 tol = 5 * 10**-6
 
-def jacobian(A, b, x, tol, xn, x0):
+
+
+#approximate the jacobian matrix using central finite differences
+def jacobian(A, b, x, h):
     """
         Computes the Jacobian matrix of the nonlinear system using central finite differences.
         
@@ -59,21 +63,32 @@ def jacobian(A, b, x, tol, xn, x0):
         
         x : 
         
-        tol :
+        h :
     """
-    # compute the Jacobian matrix
-    J = np.zeros((m, m))
-    # compute the step size
-    h = tol * (LA.norm(x) + 1) * np.ones(m)
-    # compute the finite difference approximation of the Jacobian matrix
-    for i in range(m):
-        # compute the step vector
-        h[i] = h[i] + 1
-        # compute the Jacobian matrix
-        J[i, i] = (A.dot(x + h) - A.dot(x - h)) / (2 * h[i])
-        # reset the step vector
-        h[i] = tol * (LA.norm(x) + 1)
+    J = np.zeros_like(A)
+    
+    while xn > tol:
+        for i in range(0,len(x)):
+            v[i] = x + h[i]
+            w[i] = x - h[i]
+       
+        x = v[0] 
+        y = v[1]
+        z = v[2]
+        
+        l = w[0]
+        m = w[1]
+        n = w[2]
+
+        final_vector = (array([f(x,y,z), g(x,y,z), h(x,y,z)]) - array([f(l,m,n), g(l,m,n), h(l,m,n)])) / (2 * h)
+        
+        J = [[final_vector[0,0], final_vector[1,0], final_vector[2,0]], 
+             [final_vector[0,1], final_vector[1,1], final_vector[2,1]],
+             [final_vector[0,2], final_vector[1,2], final_vector[2,2]]]
+
     return J
+    
+
 
 def newton_nonlinear (A, b, x, tol, xn, x0):
     """
@@ -113,37 +128,8 @@ def newton_nonlinear (A, b, x, tol, xn, x0):
         n = n + 1
 
 #1
-x = x1
-A = A1
-b = b1
-m = m1
-x0 = x01
-
-#Test Jacobi Method
-jacobian(A, b, x, tol, xn, x0)
-
-#Call Newton's Method
-newton_nonlinear(A, b, x, tol, xn, x0)
-
-#2
-x = x2
-A = A2
-b = b2
-m = m2
-x0 = x02
-
-#Call Newton's Method
-newton_nonlinear(A, b, x, tol, xn, x0)
-
-#3
-x = x3
-A = A3
-b = b3
-m = m3
-x0 = x03
-
-#Call Newton's Method
-newton_nonlinear(A, b, x, tol, xn, x0)
+#Test Jacobian Method
+jacobian(A, b, x, h)
 
 
 """
