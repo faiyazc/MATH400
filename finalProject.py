@@ -48,21 +48,32 @@ xn = 1 #dummy initial tolerance
 tol = 5 * 10**-6
 
 def jacobian(A, b, x, tol, xn, x0):
-    
-    while xn > tol:
-    
-        x[0] = (b[0] - ( A[0,1]*x0[1] ) )/A[0,0]
-    
-        for i in range(1,m-1):
-            x[i] = ( b[i]- ( A[i, i-1]*x0[i-1] + A[i,i+1]*x0[i+1] ) )/A[i,i]
-            
-        x[m-1] = (b[m-1] - ( A[m-1,m-2]*x0[m-2] ) )/A[m-1,m-1]
-    
-        #xn = LA.norm(x-x0,1) 
-        #xn = LA.norm(x-x0,2) 
-        xn = LA.norm(x-x0,inf)
-        x0 = copy.copy(x)
-        n = n + 1
+    """
+        Computes the Jacobian matrix of the nonlinear system using central finite differences.
+        
+        Parameters
+        ----------
+        A : 
+        
+        b :
+        
+        x : 
+        
+        tol :
+    """
+    # compute the Jacobian matrix
+    J = np.zeros((m, m))
+    # compute the step size
+    h = tol * (LA.norm(x) + 1) * np.ones(m)
+    # compute the finite difference approximation of the Jacobian matrix
+    for i in range(m):
+        # compute the step vector
+        h[i] = h[i] + 1
+        # compute the Jacobian matrix
+        J[i, i] = (A.dot(x + h) - A.dot(x - h)) / (2 * h[i])
+        # reset the step vector
+        h[i] = tol * (LA.norm(x) + 1)
+    return J
 
 def newton_nonlinear (A, b, x, tol, xn, x0):
     """
