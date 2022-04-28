@@ -22,7 +22,7 @@ Question 1:
 #matrix at each step.
 """
    
-#A1
+#Section 1
 def A(x):
   x1 = x[0]
   x2 = x[1]
@@ -33,12 +33,16 @@ def A(x):
   output[2] = x[0]**2 + x[1]**2 - 4*x[2]
   return output
 
-#initial vector
-x = array([1.0, 1, 1])
-
 b = array([1, 0.25, 0])
 
 m = len(b)
+
+x = array([1.0, 1, 1]) # initial vector
+
+v = [0,0,0]
+w = [0,0,0]
+w = [[0],[0],[0]]
+
 
 n = 0 #iteration counter
 x0 = copy.copy(x)
@@ -70,7 +74,7 @@ def jacobian(A, x, h):
             
 
 
-def newton_nonlinear (A, b, x, tol, xn, x0):
+def newton_nonlinear (A, b, x, h, tol, xn, x0):
     """
         Solves nonlinear system using Newton's method with a given intitial vector. 
         Terminating the process when the max norm of difference between
@@ -94,25 +98,30 @@ def newton_nonlinear (A, b, x, tol, xn, x0):
     while xn > tol:
         # compute the Jacobian matrix
         J = jacobian(A, x, h)
-        # compute the residual vector
-        r = b - A.dot(x)
+        # # compute the residual vector
+        # r = b - A.dot(x)
         # compute the Newton step
-        delta_x = LA.solve(J, r)
+        delta_x = LA.solve(J, b)
         # update the solution
         x = x + delta_x
         # compute the norm of the difference between the current and previous iterates
         xn = LA.norm(x - x0)
         # update the previous iterate
         x0 = copy.copy(x)
-        # increment the iteration counter
-        n = n + 1
+    
+    return x
+       
 
 #1
 #Test Jacobian Method
 print(jacobian(A, x, h))
 
 #Call Newton's Method
-# newton_nonlinear(A, b, x, tol, xn, x0)
+print(newton_nonlinear(A, b, x, h, tol, xn, x0))
+
+
+
+
 
 
 """
