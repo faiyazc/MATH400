@@ -21,25 +21,24 @@ Question 1:
 #system in each step. Uses numerical differentiation to compute the Jacobian
 #matrix at each step.
 """
-    
-f = lambda x,y,z: x**2 + y**2 + z**2 - 1
-g = lambda x,y,z: x**2 + z**2 - 0.25
-h = lambda x,y,z: x**2 + y**2 - 4*z  
+   
+#A1
+def A(x):
+  x1 = x[0]
+  x2 = x[1]
+  x3 = x[2]
+  output = np.zeros(3)
+  output[0] = x[0]**2 + x[1]**2 + x[2]**2 - 1
+  output[1] = x[0]**2 + x[2]**2 - 0.25
+  output[2] = x[0]**2 + x[1]**2 - 4*x[2]
+  return output
 
-
-#Section 1
-A = array([f, g, h])
+#initial vector
+x = array([1.0, 1, 1])
 
 b = array([1, 0.25, 0])
 
 m = len(b)
-
-x = array([1.0, 1, 1]) # initial vector
-
-v = [0,0,0]
-w = [0,0,0]
-w = [[0],[0],[0]]
-
 
 n = 0 #iteration counter
 x0 = copy.copy(x)
@@ -51,43 +50,24 @@ tol = 5 * 10**-6
 
 
 #approximate the jacobian matrix using central finite differences
-def jacobian(A, b, x, h):
+def jacobian(A, x, h):
     """
         Computes the Jacobian matrix of the nonlinear system using central finite differences.
-        
-        Parameters
-        ----------
-        A : 
-        
-        b :
-        
-        x : 
-        
-        h :
     """
     J = np.zeros_like(A)
     
-    while xn > tol:
-        for i in range(0,len(x)):
-            v[i] = x + h[i]
-            w[i] = x - h[i]
-       
-        x = v[0] 
-        y = v[1]
-        z = v[2]
-        
-        l = w[0]
-        m = w[1]
-        n = w[2]
-
-        final_vector = (array([f(x,y,z), g(x,y,z), h(x,y,z)]) - array([f(l,m,n), g(l,m,n), h(l,m,n)])) / (2 * h)
-        
-        J = [[final_vector[0,0], final_vector[1,0], final_vector[2,0]], 
-             [final_vector[0,1], final_vector[1,1], final_vector[2,1]],
-             [final_vector[0,2], final_vector[1,2], final_vector[2,2]]]
-
+    nrow = len(A(x))
+    ncol = len(x)
+    J = np.zeros(nrow*ncol)
+    J = J.reshape(nrow,ncol)
+    for i in range(nrow):
+        for j in range(ncol):
+            ej = np.zeros(ncol)
+            ej[j] = 1
+            dij = (A(x + h * ej)[i] - A(x - h * ej)[i])/(2*h)
+            J[i,j] = dij
     return J
-    
+            
 
 
 def newton_nonlinear (A, b, x, tol, xn, x0):
@@ -113,7 +93,7 @@ def newton_nonlinear (A, b, x, tol, xn, x0):
 
     while xn > tol:
         # compute the Jacobian matrix
-        J = jacobian(A, b, x, tol, xn, x0)
+        J = jacobian(A, x, h)
         # compute the residual vector
         r = b - A.dot(x)
         # compute the Newton step
@@ -129,7 +109,10 @@ def newton_nonlinear (A, b, x, tol, xn, x0):
 
 #1
 #Test Jacobian Method
-jacobian(A, b, x, h)
+print(jacobian(A, x, h))
+
+#Call Newton's Method
+# newton_nonlinear(A, b, x, tol, xn, x0)
 
 
 """
