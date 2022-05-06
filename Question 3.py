@@ -1,5 +1,9 @@
 import numpy as np
 import sympy as sp
+import scipy.linalg as la
+
+
+
 a00, a10, a20, a30 = sp.symbols('a00, a10, a20, a30')
 a01, a11, a21, a31 = sp.symbols('a01, a11, a21, a31')
 a02, a12, a22, a32 = sp.symbols('a02, a12, a22, a32')
@@ -142,10 +146,26 @@ def partB():
          [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 0, 0, 0, 0, 0, 0],  # pxy(1, 0)
          [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 2, 4, 6, 3, 6, 9]  # pxy(1, 1)
          ]
+    print(np.array(b))
+  
+    P, L, U = la.lu(np.array(b))
+    np.dot(P.T, b)
+    np.dot(L, U)
+    print("P:")
+    print(P)
+    print("L:")
+    print(np.array(L))
+    print("U:")
+    print(U)
 
+   
 
 
 print("Part A:")
 partA()
+print()
 print("Part B:")
 partB()
+
+
+    
