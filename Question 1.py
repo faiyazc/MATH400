@@ -89,8 +89,8 @@ def Newton(A, x, h, tol, n):
         J = jacobian(A, xn, h)
         f = A(xn)
         #find delta using partial pivoting
-        # delta = part_piv_ge(J, -f)
-        delta = la.solve(J, -f) #faster method
+        delta = part_piv_ge(J, -f)
+        #delta = la.solve(J, -f) #faster method and part_piv_ge is breaking
         xn = xn + delta
         if la.norm(delta) < tol:
             break
