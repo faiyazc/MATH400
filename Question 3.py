@@ -144,6 +144,7 @@ def partB():
          ]
 
 
+
 print("Part A:")
 partA()
 print("Part B:")
