@@ -1,7 +1,15 @@
 import numpy as np
 import sympy as sp
+a00, a10, a20, a30 = sp.symbols('a00, a10, a20, a30')
+a01, a11, a21, a31 = sp.symbols('a01, a11, a21, a31')
+a02, a12, a22, a32 = sp.symbols('a02, a12, a22, a32')
+a03, a13, a23, a33 = sp.symbols('a03, a13, a23, a33')
 
-def bicubic_interpolation():
+a = [a00, a10, a20, a30,
+     a01, a02, a03, a11,
+     a21, a31, a12, a22,
+     a32, a13, a23, a33]
+def partA():
     x, y = sp.symbols('x, y')
     for i in 0, 1:
         for j in 0, 1:
@@ -22,61 +30,19 @@ def bicubic_interpolation():
             x, y = i, j
             print("pxy(", i, j, "): ", interpolate_xy(x, y))
 
-
 def interpolate(x, y):
-    a00, a10, a20, a30 = sp.symbols('a00, a10, a20, a30')
-    a01, a11, a21, a31 = sp.symbols('a01, a11, a21, a31')
-    a02, a12, a22, a32 = sp.symbols('a02, a12, a22, a32')
-    a03, a13, a23, a33 = sp.symbols('a03, a13, a23, a33')
-
-    a = [a00, a10, a20, a30,
-         a01, a02, a03, a11,
-         a21, a31, a12, a22,
-         a32, a13, a23, a33]
-
     p = np.dot(a, v(x, y))
     return p
 
-
 def interpolate_x(x, y):
-    a00, a10, a20, a30 = sp.symbols('a00, a10, a20, a30')
-    a01, a11, a21, a31 = sp.symbols('a01, a11, a21, a31')
-    a02, a12, a22, a32 = sp.symbols('a02, a12, a22, a32')
-    a03, a13, a23, a33 = sp.symbols('a03, a13, a23, a33')
-
-    a = [a00, a10, a20, a30,
-         a01, a02, a03, a11,
-         a21, a31, a12, a22,
-         a32, a13, a23, a33]
-
     p = np.dot(a, vx(x, y))
     return p
 
 def interpolate_y(x, y):
-    a00, a10, a20, a30 = sp.symbols('a00, a10, a20, a30')
-    a01, a11, a21, a31 = sp.symbols('a01, a11, a21, a31')
-    a02, a12, a22, a32 = sp.symbols('a02, a12, a22, a32')
-    a03, a13, a23, a33 = sp.symbols('a03, a13, a23, a33')
-
-    a = [a00, a10, a20, a30,
-         a01, a02, a03, a11,
-         a21, a31, a12, a22,
-         a32, a13, a23, a33]
-
     p = np.dot(a, vy(x, y))
     return p
 
 def interpolate_xy(x, y):
-    a00, a10, a20, a30 = sp.symbols('a00, a10, a20, a30')
-    a01, a11, a21, a31 = sp.symbols('a01, a11, a21, a31')
-    a02, a12, a22, a32 = sp.symbols('a02, a12, a22, a32')
-    a03, a13, a23, a33 = sp.symbols('a03, a13, a23, a33')
-
-    a = [a00, a10, a20, a30,
-         a01, a02, a03, a11,
-         a21, a31, a12, a22,
-         a32, a13, a23, a33]
-
     p = np.dot(a, vxy(x, y))
     return p
 
@@ -154,4 +120,31 @@ def vxy(x, y):
             6 * x * y ** 2,
             9 * x ** 2 * y ** 2]
 
-bicubic_interpolation()
+def partB():
+    # 0: a00, 1: a10, 2: a20, 3: a30,
+    # 4: a01, 5: a02, 6: a03, 7: a11,
+    # 8: a21, 9: a31, 10: a12, 11: a22,
+    # 12: a32, 13:a13, 14: a23, 15: a33
+    b = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # p(0, 0)
+         [1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],  # p(0, 1)
+         [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # p(1, 0)
+         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],  # p(1, 1)
+         [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # px(0, 0)
+         [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],  # px(0, 1)
+         [0, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # px(1, 0)
+         [0, 1, 2, 3, 0, 0, 0, 1, 2, 3, 1, 2, 3, 1, 2, 3],  # px(1, 1)
+         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # py(0, 0)
+         [0, 0, 0, 0, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # py(0, 1)
+         [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],  # py(1, 0)
+         [0, 0, 0, 0, 1, 2, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3],  # py(1, 1)
+         [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],  # pxy(0, 0)
+         [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 3, 0, 0],  # pxy(0, 1)
+         [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 0, 0, 0, 0, 0, 0],  # pxy(1, 0)
+         [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 2, 4, 6, 3, 6, 9]  # pxy(1, 1)
+         ]
+
+
+print("Part A:")
+partA()
+print("Part B:")
+partB()
