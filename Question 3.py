@@ -1,3 +1,5 @@
+#Resources used: online python libraries, youtube videos
+
 import numpy as np
 import sympy as sp
 import scipy.linalg as la
@@ -278,7 +280,8 @@ def Bicubic_Interpolation(f, interpolation_of_x, interpolation_of_y, lu,piv, h):
     ])
     interpolation = [p, px, py, pxy]
 
-    # Calculating the error
+   
+   #Calculating the error
 
     approx_centered_difference = [f(interpolation_of_x, interpolation_of_y), fx(interpolation_of_x, interpolation_of_y), fy(
         interpolation_of_x, interpolation_of_y), fxy(interpolation_of_x, interpolation_of_y)]
