@@ -32,22 +32,29 @@ def jacobiMethod(A, b):
     x0 = copy.copy(x)
     m = len(b)
     while error > tol:
-        print("nextX = \n", x0, "\n")
+        print("X = \n", x, "\n")
         print("error = \n", error, "\n")
 
         # Use a for loop to figure this out/write a function to do it.
         # nextX[0] = 1/A[0][0] * (b[0] - (A[0][1] * x[1] + ... + A[0][len(A)] * x[len(A)]))
-        row_sum = 0  # sum of a_{ij}*x_{j} for all j
-        for i in range(m):          # iterate through rows
+        row_sum = 0
+        for i in range(m):  # iterate through rows
+            # print("A[i]: ", A[i])
             for j in range(len(A[0])):   # iterate through columns
                 if A[i][j] == 0:
                     continue
+                print(f"row_sum = {row_sum} + {A[i][j]} * {x[j]}")
                 row_sum = row_sum + A[i][j] * x[j]
+            print("row_sum row:", i, " = ", row_sum)
+            print(f"x0[i] = ({b[i]} - {row_sum}) / {A[i][i]}")
             x0[i] = (b[i] - row_sum) / A[i][i]
-
-        error = la.norm(np.abs(np.subtract(x0, x)), inf)
-        x = copy.copy(x0)
+            row_sum = 0  # reset row_sum to 0 after row-iteration is done.
+        error = la.norm(np.subtract(x0, x), inf)
+        for i in range(len(x)):  # copy.copy
+            x[i] = x0[i]
         iteration = iteration + 1
+        if iteration > 500:
+            break
     print(f" Number of iterations for Jacobi = {iteration}")
     print(f"approximate x = {x0}")
 
@@ -61,13 +68,16 @@ def gaussSeidelMethod(A, b):
     x0 = copy.copy(x)
     m = len(b)
     while error > tol:
-        print("nextX = \n", x0, "\n")
+        print("prevX = \n", x0, "\n")
         print("error = \n", error, "\n")
 
         # Use a for loop to figure this out/write a function to do it.
         # nextX[0] = 1/A[0][0] * (b[0] - (A[0][1] * x[1] + ... + A[0][len(A)] * x[len(A)]))
-        row_sum = 0  # sum of a_{ij}*x_{j} for all j
+        print(x)
         for i in range(len(b)):  # Iterate through rows
+            row_sum = 0  # sum of a_{ij}*x_{j} for all j
+            print("A[i]:", A[i])
+            print("row_sum before: ", row_sum)
             current_column = 0  # Keep track of which element we are on
             for index in range(current_column): # Iterate 0->current_column
                 print(A[i][index])
@@ -76,7 +86,9 @@ def gaussSeidelMethod(A, b):
                 print(A[i][index])
                 row_sum = row_sum + A[i][index] * x0[index]
             x0[i] = (b[i] - row_sum) / A[i][i]
-
+            current_column += 1
+            print("row_sum after: ", row_sum)
+        print(x)
         error = la.norm(np.abs(np.subtract(x0, x)), inf)
         x = copy.copy(x0)
         iteration = iteration + 1
@@ -84,5 +96,5 @@ def gaussSeidelMethod(A, b):
     print(f"approximate x = {x0}")
 
 
-gaussSeidelMethod(A, b)
+# gaussSeidelMethod(A, b)
 
